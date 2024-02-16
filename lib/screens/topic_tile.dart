@@ -33,16 +33,10 @@ class TopicTile extends StatelessWidget {
                             fontWeight: FontWeight.w300,
                             fontSize: 20,
                           ),
+                          softWrap: true,
                         ),
                       ),
                       Expanded(child: SizedBox(width: double.infinity,)),
-                      Icon(
-                        tag.icon,
-                        size: 35.0,
-                        weight: 200,
-                        color: Colors.black,
-                      ),
-                      SizedBox(width: 10,)
                     ],
                   ),
                 ),

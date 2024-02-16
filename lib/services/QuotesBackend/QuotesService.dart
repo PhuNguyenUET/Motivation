@@ -58,4 +58,12 @@ class QuotesService {
       }
     }
   }
+
+  Future<List<String>> getAllCategories() async {
+    return _quotesRepository.getCategoryList();
+  }
+
+  Future<List<String>> getRandomCategories() async {
+    return _quotesRepository.getRandomCategory();
+  }
 }

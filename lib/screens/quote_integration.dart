@@ -33,4 +33,12 @@ class QuoteIntegration {
   Future<String> insertQuote (UserQuote quote) async {
     return await _backend.insertQuote(quote);
   }
+
+  Future<List<String>> getAllCategories() async {
+    return await _backend.getAllCategories();
+  }
+
+  Future<List<String>> getRandomCategories() async {
+    return await _backend.getRandomCategories();
+  }
 }

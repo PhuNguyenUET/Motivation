@@ -33,4 +33,12 @@ class QuoteController {
   Future<List<Quote>> getQuotesByCate(String cate) async {
     return await _quoteService.getQuoteByCategory(cate);
   }
+
+  Future<List<String>> getAllCategories() async {
+    return await _quoteService.getAllCategories();
+  }
+
+  Future<List<String>> getRandomCategories() async {
+    return await _quoteService.getRandomCategories();
+  }
 }

@@ -75,16 +75,16 @@ class _HomeState extends State<Home> {
           });
     }
 
-    return FutureBuilder<List<Quote>>(
+    return FutureBuilder<void>(
       future: quoteState.initInstance(),
-      builder: (BuildContext context, AsyncSnapshot<List<Quote>> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           print("Waiting");
         } else {
           if (snapshot.hasError) {
             print('Error: ${snapshot.error}');
           } else {
-            quoteState.quoteList = snapshot.data!;
+            print("Initiation completed");
           }
           print("Done waiting");
         }
@@ -115,7 +115,7 @@ class _HomeState extends State<Home> {
                           color: Colors.white,
                         ),
                         label: Text(
-                          'Topics',
+                          quoteState.category,
                           style: TextStyle(
                               fontFamily: 'Font${decorState.fontIndex}',
                               fontSize: 20.0,

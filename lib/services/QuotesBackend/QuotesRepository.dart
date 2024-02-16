@@ -20,7 +20,7 @@ class QuoteRepository {
     final dbInstance = await QuotesDatabase.instance;
     final db = dbInstance.database;
 
-    final result = await db.rawQuery("SELECT COUNT(*) FROM quotes;");
+    final List<Map<String, dynamic>> result = await db.rawQuery("SELECT COUNT(*) FROM quotes;");
 
     return Sqflite.firstIntValue(result) ?? -1;
   }
@@ -40,7 +40,7 @@ class QuoteRepository {
     final dbInstance = await QuotesDatabase.instance;
     final db = dbInstance.database;
 
-    final result = await db.rawQuery("SELECT id FROM categories WHERE category = '$category'");
+    final List<Map<String, dynamic>> result = await db.rawQuery("SELECT id FROM categories WHERE category = '$category'");
 
     return Sqflite.firstIntValue(result) ?? -1;
   }
@@ -49,7 +49,7 @@ class QuoteRepository {
     final dbInstance = await QuotesDatabase.instance;
     final db = dbInstance.database;
 
-    final result = await db.rawQuery("SELECT categoryId FROM quotes WHERE id = ${quote.id}");
+    final List<Map<String, dynamic>> result = await db.rawQuery("SELECT categoryId FROM quotes WHERE id = ${quote.id}");
 
     return Sqflite.firstIntValue(result) ?? -1;
   }
@@ -59,7 +59,7 @@ class QuoteRepository {
     final db = dbInstance.database;
 
     //TODO: Fix the query
-    final result = await db.rawQuery('SELECT * FROM quotes WHERE id IN (SELECT id FROM quotes WHERE categoryId = $cateId ORDER BY RANDOM() LIMIT 100);');
+    final List<Map<String, dynamic>> result = await db.rawQuery('SELECT * FROM quotes WHERE id IN (SELECT id FROM quotes WHERE categoryId = $cateId ORDER BY RANDOM() LIMIT 100);');
 
     return result.map((e) => Quote.fromJson(e)).toList();
   }
@@ -74,6 +74,24 @@ class QuoteRepository {
       where: 'id = ?',
       whereArgs: [quote.id],
     );
+  }
+
+  Future<List<String>> getCategoryList() async {
+    final dbInstance = await QuotesDatabase.instance;
+    final db = dbInstance.database;
+    
+    final List<Map<String, dynamic>> result = await db.rawQuery('SELECT category FROM categories;');
+
+    return result.map((e) => e['category'] as String).toList();
+  }
+
+  Future<List<String>> getRandomCategory() async {
+    final dbInstance = await QuotesDatabase.instance;
+    final db = dbInstance.database;
+
+    final List<Map<String, dynamic>> result = await db.rawQuery('SELECT category FROM categories ORDER BY RANDOM() LIMIT 13;');
+
+    return result.map((e) => e['category'] as String).toList();
   }
 
   Future<void> deleteQuote(Quote quote) async {

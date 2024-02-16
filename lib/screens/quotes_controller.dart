@@ -7,11 +7,10 @@ import '../decor_controller.dart';
 import '../models/quote.dart';
 
 class QuoteController extends ChangeNotifier {
-  Future<List<Quote>> initInstance() async {
-    if (quoteList.length < 10) {
-      return await _getNextQuotesBatch();
+  Future<void> initInstance() async {
+    if (_quoteList.isEmpty) {
+      await _getNextQuotesBatch();
     }
-    return _quoteList;
   }
   static final _backend = QuoteIntegration();
 
@@ -21,7 +20,7 @@ class QuoteController extends ChangeNotifier {
   Future<void> increaseQuoteIndex() async {
     _quoteIndex ++;
     if (_quoteIndex == _quoteList.length) {
-      _quoteList = await _getNextQuotesBatch();
+      await _getNextQuotesBatch();
       _quoteIndex = 0;
     }
     notifyListeners();
@@ -36,29 +35,25 @@ class QuoteController extends ChangeNotifier {
   }
 
   String getCurrentQuote() {
-    return quoteList[_quoteIndex].quote;
+    return _quoteList[_quoteIndex].quote;
   }
 
   String getCurrentAuthor() {
-    return quoteList[_quoteIndex].author == null ? ""
-        : '- ${quoteList[_quoteIndex].author} -';
+    return _quoteList[_quoteIndex].author == null ? ""
+        : '- ${_quoteList[_quoteIndex].author} -';
   }
 
-  List<Quote> _quoteList = [Quote(id: 0, quote: 'Fetch')];
+  List<Quote> _quoteList = [];
   String _category = 'general';
 
   String get category => _category;
-  set category(String category) {
-    _category = category;
+  Future<void> setCategory(String cate) async {
+    _category = cate;
+    await _getNextQuotesBatch();
     notifyListeners();
   }
 
-  List<Quote> get quoteList => _quoteList;
-  set quoteList(List<Quote> q) {
-    _quoteList = q;
-    //notifyListeners();
-  }
-  Future<List<Quote>> _getNextQuotesBatch() async {
-    return await _backend.get100Quotes(_category);
+  Future<void> _getNextQuotesBatch() async {
+    _quoteList = await _backend.get100Quotes(_category);
   }
 }
