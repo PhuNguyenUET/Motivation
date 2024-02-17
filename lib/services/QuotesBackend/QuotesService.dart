@@ -7,7 +7,8 @@ class QuotesService {
   final _quotesRepository = QuoteRepository();
 
   Future<String> insertQuote(UserQuote quote) async {
-    await _quotesRepository.insertQuote(Quote.fromUserQuote(quote));
+    int cateId = await _quotesRepository.getCategoryId('user-created');
+    await _quotesRepository.insertQuote(Quote.fromUserQuote(quote, cateId));
     return "Quotes inserted successfully";
   }
 
@@ -47,9 +48,15 @@ class QuotesService {
   Future<List<Quote>> getQuoteByCategory(String cate) async {
     if (cate == 'general') {
       var res = await _quotesRepository.getRandom100Quotes();
-      print (res.length);
       return res;
-    } else {
+    } else if (cate == 'favourites') {
+      var res = await _quotesRepository.getAllFavouriteQuotes();
+      return res;
+    } else if (cate == 'user-created') {
+      int cateId = await _quotesRepository.getCategoryId(cate);
+      var res = await _quotesRepository.getAllQuotesFromCategory(cateId);
+      return res;
+    }else {
       int cateId = await _quotesRepository.getCategoryId(cate);
       if (cateId == -1) {
         return [];
@@ -60,10 +67,23 @@ class QuotesService {
   }
 
   Future<List<String>> getAllCategories() async {
-    return _quotesRepository.getCategoryList();
+    return await _quotesRepository.getCategoryList();
   }
 
   Future<List<String>> getRandomCategories() async {
-    return _quotesRepository.getRandomCategory();
+    return await _quotesRepository.getRandomCategory();
+  }
+
+  Future<int> getNumberOfFavourites() async {
+    return await _quotesRepository.getNumberOfFavourite();
+  }
+
+  Future<List<String>> getCategoriesInSearch(String input) async {
+    return await _quotesRepository.getCategoriesInSearch(input);
+  }
+
+  Future<int> getNumberOfUserCreated() async {
+    int cateId = await _quotesRepository.getCategoryId('user-created');
+    return await _quotesRepository.getNumberOfQuotesInCategory(cateId);
   }
 }

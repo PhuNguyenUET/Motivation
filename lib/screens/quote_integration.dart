@@ -14,7 +14,7 @@ class QuoteIntegration {
 
   static final QuoteIntegration _instance = QuoteIntegration._internal();
 
-  Future<List<Quote>> get100Quotes(String cate) async {
+  Future<List<Quote>> getQuotes(String cate) async {
     return await _backend.getQuotesByCate(cate);
   }
 
@@ -38,7 +38,15 @@ class QuoteIntegration {
     return await _backend.getAllCategories();
   }
 
-  Future<List<String>> getRandomCategories() async {
-    return await _backend.getRandomCategories();
+  Future<int> getNumberOfFavourites() async {
+    return await _backend.getNumberOfFavourites();
+  }
+
+  Future<List<String>> getCategoriesInSearch(String input) async {
+    return await _backend.getCategoriesInSearch(input);
+  }
+
+  Future<int> getNumberOfUserCreated() async {
+    return await _backend.getNumberOfUserCreated();
   }
 }

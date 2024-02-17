@@ -7,10 +7,7 @@ class TopicsController {
     return await _backend.getAllCategories();
   }
 
-  Future<List<String>> getRandomCategories() async {
-    List<String> res = ['general'];
-    List<String> backendAddition = await _backend.getRandomCategories();
-    res.addAll(backendAddition);
-    return res;
+  Future<List<String>> getCategoriesInSearch(String input) async {
+    return await _backend.getCategoriesInSearch(input);
   }
 }

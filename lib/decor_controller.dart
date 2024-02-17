@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:motivation/screens/quote_integration.dart';
-import 'package:motivation/screens/quotes.dart';
 
 import 'models/quote.dart';
 

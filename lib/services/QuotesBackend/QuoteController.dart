@@ -38,7 +38,24 @@ class QuoteController {
     return await _quoteService.getAllCategories();
   }
 
-  Future<List<String>> getRandomCategories() async {
-    return await _quoteService.getRandomCategories();
+  Future<int> getNumberOfFavourites() async {
+    return await _quoteService.getNumberOfFavourites();
+  }
+
+  Future<List<String>> getCategoriesInSearch(String input) async {
+    List<String> res = ['general'];
+    if (input.isEmpty) {
+      List<String> backendAddition = await _quoteService.getRandomCategories();
+      res.addAll(backendAddition);
+      return res;
+    } else {
+      List<String> backendAddition = await _quoteService.getCategoriesInSearch(input.toLowerCase());
+      res.addAll(backendAddition);
+      return res;
+    }
+  }
+
+  Future<int> getNumberOfUserCreated() async {
+    return await _quoteService.getNumberOfUserCreated();
   }
 }

@@ -89,7 +89,7 @@ class QuoteRepository {
     final dbInstance = await QuotesDatabase.instance;
     final db = dbInstance.database;
 
-    final List<Map<String, dynamic>> result = await db.rawQuery('SELECT category FROM categories ORDER BY RANDOM() LIMIT 13;');
+    final List<Map<String, dynamic>> result = await db.rawQuery('SELECT category FROM categories ORDER BY RANDOM() LIMIT 9;');
 
     return result.map((e) => e['category'] as String).toList();
   }
@@ -103,5 +103,50 @@ class QuoteRepository {
       where: 'id = ?',
       whereArgs: [quote.id],
     );
+  }
+
+  Future<int> getNumberOfFavourite() async {
+    final dbInstance = await QuotesDatabase.instance;
+    final db = dbInstance.database;
+
+    final List<Map<String, dynamic>> result = await db.rawQuery("SELECT COUNT(*) FROM quotes WHERE favourite = 1;");
+
+    return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  Future<List<String>> getCategoriesInSearch(String input) async {
+    final dbInstance = await QuotesDatabase.instance;
+    final db = dbInstance.database;
+
+    final List<Map<String, dynamic>> result = await db.rawQuery("SELECT category FROM categories  WHERE category LIKE '$input%'");
+
+    return result.map((e) => e['category'] as String).toList();
+  }
+
+  Future<List<Quote>> getAllFavouriteQuotes() async {
+    final dbInstance = await QuotesDatabase.instance;
+    final db = dbInstance.database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT * FROM quotes WHERE favourite = 1;');
+
+    return maps.map((e) => Quote.fromJson(e)).toList();
+  }
+
+  Future<int> getNumberOfQuotesInCategory(int cateId) async {
+    final dbInstance = await QuotesDatabase.instance;
+    final db = dbInstance.database;
+
+    final List<Map<String, dynamic>> result = await db.rawQuery("SELECT COUNT(*) FROM quotes WHERE categoryId = $cateId;");
+
+    return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  Future<List<Quote>> getAllQuotesFromCategory(int cateId) async {
+    final dbInstance = await QuotesDatabase.instance;
+    final db = dbInstance.database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT * FROM quotes WHERE categoryId = $cateId;');
+
+    return maps.map((e) => Quote.fromJson(e)).toList();
   }
 }

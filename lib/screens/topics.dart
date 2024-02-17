@@ -18,24 +18,24 @@ class Topics extends StatefulWidget {
 }
 
 class _TopicsState extends State<Topics> {
+  List<String> categories = [];
+  String search = "";
+
   @override
   Widget build(BuildContext context) {
-    var quoteState = Provider.of<QuoteController>(context, listen:true);
+    var quoteState = Provider.of<QuoteController>(context, listen: true);
     var topicsController = TopicsController();
 
-    List<String> categories = [];
-
     return FutureBuilder<List<String>>(
-      future: topicsController.getRandomCategories(),
-      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-        if(snapshot.hasData) {
-          categories = snapshot.data!;
-          print(categories.length);
-        } else if (snapshot.hasError) {
-          print('Error: ${snapshot.error}');
-        }
-        return SingleChildScrollView(
-          child: Column(
+        future: topicsController.getCategoriesInSearch(search),
+        builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+          if (snapshot.hasData) {
+            categories = snapshot.data!;
+            print(categories.length);
+          } else if (snapshot.hasError) {
+            print('Error: ${snapshot.error}');
+          }
+          return Column(
             children: [
               UnicornOutlineButton(
                 strokeWidth: 4,
@@ -53,63 +53,64 @@ class _TopicsState extends State<Topics> {
                 onPressed: () {},
               ),
               SizedBox(
-                height: 15,
+                height: 10,
               ),
-              snapshot.connectionState == ConnectionState.done ? SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: AnimationLimiter(
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      itemCount: 7,
-                      itemBuilder: (context, index) {
-                        return AnimationConfiguration.staggeredList(
-                          position: index,
-                          duration: const Duration(milliseconds: 700),
-                          child: SlideAnimation(
-                            verticalOffset: 100.0,
-                            child: FadeInAnimation(
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: GestureDetector(
-                                          behavior: HitTestBehavior.translucent,
-                                          onTap: () async {
-                                            await quoteState.setCategory(categories[2 * index]);
-                                            print(quoteState.category);
-                                            Navigator.pop(context);
-                                          },
-                                          child: TopicTile(
-                                            tag: Tag(
-                                                tag: categories[2 * index]),
-                                          ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: GestureDetector(
-                                          behavior: HitTestBehavior.translucent,
-                                          onTap: () async {
-                                            await quoteState.setCategory(categories[2 * index + 1]);
-                                            Navigator.pop(context);
-                                          },
-                                          child: TopicTile(
-                                            tag: Tag(
-                                                tag: categories[2 * index + 1]),
-                                          ),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                            ),
-                          ),
-                        );
-                      }),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SearchBar(
+                  padding: const MaterialStatePropertyAll<EdgeInsets>(
+                      EdgeInsets.symmetric(horizontal: 16.0)),
+                  onSubmitted: (val) {
+                    setState(() {
+                      search = val;
+                      print(search);
+                    });
+                  },
+                  leading: const Icon(Icons.search),
                 ),
-              ) : Center(),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              snapshot.connectionState == ConnectionState.done
+                  ? Expanded(
+                      child: AnimationLimiter(
+                        child: GridView.builder(
+                            shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
+                            itemCount: categories.length,
+                            scrollDirection: Axis.vertical,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 7 / 4),
+                            itemBuilder: (context, index) {
+                              return AnimationConfiguration.staggeredList(
+                                position: index,
+                                duration: const Duration(milliseconds: 700),
+                                child: SlideAnimation(
+                                  verticalOffset: 100.0,
+                                  child: FadeInAnimation(
+                                      child: GestureDetector(
+                                    behavior: HitTestBehavior.translucent,
+                                    onTap: () async {
+                                      await quoteState
+                                          .setCategory(categories[index]);
+                                      print(quoteState.category);
+                                      Navigator.pop(context);
+                                    },
+                                    child: TopicTile(
+                                      tag: Tag(tag: categories[index]),
+                                    ),
+                                  )),
+                                ),
+                              );
+                            }),
+                      ),
+                    )
+                  : Center(),
             ],
-          ),
-        );
-      }
-    );
+          );
+        });
   }
 }

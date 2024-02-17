@@ -18,11 +18,11 @@ class Quote {
     favourite: data['favourite'] == 0 ? false : true,
   );
 
-  Quote.fromUserQuote(UserQuote q):
+  Quote.fromUserQuote(UserQuote q, int cateId):
       id = q.id!,
       quote = q.quote,
       author = '',
-      categoryId = Constants.CATE_USER_CREATED,
+      categoryId = cateId,
       favourite = q.favourite;
 
   Map<String, dynamic> toMap() => {
@@ -30,6 +30,6 @@ class Quote {
     'quote': quote,
     'author': author,
     'categoryId': categoryId,
-    'favourite' :favourite,
+    'favourite': favourite! ? 1 : 0,
   };
 }

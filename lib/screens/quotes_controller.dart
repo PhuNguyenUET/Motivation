@@ -1,14 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:motivation/main.dart';
 import 'package:motivation/screens/quote_integration.dart';
-import 'package:motivation/screens/quotes.dart';
-
 import '../decor_controller.dart';
 import '../models/quote.dart';
 
 class QuoteController extends ChangeNotifier {
   Future<void> initInstance() async {
-    if (_quoteList.isEmpty) {
+    if (_quoteList.length <= 1) {
       await _getNextQuotesBatch();
     }
   }
@@ -17,9 +15,16 @@ class QuoteController extends ChangeNotifier {
   int _quoteIndex = 0;
   int get quoteIndex => _quoteIndex;
 
+  bool _noQuotes = false;
+  bool get noQuotes => _noQuotes;
+
   Future<void> increaseQuoteIndex() async {
     _quoteIndex ++;
     if (_quoteIndex == _quoteList.length) {
+      if(_category == 'favourites') {
+        _quoteIndex --;
+        return;
+      }
       await _getNextQuotesBatch();
       _quoteIndex = 0;
     }
@@ -35,15 +40,37 @@ class QuoteController extends ChangeNotifier {
   }
 
   String getCurrentQuote() {
+    if (_quoteList.isEmpty) {
+      _noQuotes = true;
+      return "No quotes found in this category";
+    }
+    _noQuotes = false;
     return _quoteList[_quoteIndex].quote;
   }
 
+  Future<void> changeFavouriteCurrentQuote() async {
+    Quote currentQuote = _quoteList[_quoteIndex];
+    currentQuote.favourite = !currentQuote.favourite!;
+    await _backend.changeFavourite(currentQuote);
+    //notifyListeners();
+  }
+
+  bool isCurrentQuoteFav() {
+    if (_quoteList.isEmpty) {
+      return false;
+    }
+    return _quoteList[_quoteIndex].favourite ?? false;
+  }
+
   String getCurrentAuthor() {
+    if(_quoteList.isEmpty) {
+      return "";
+    }
     return _quoteList[_quoteIndex].author == null ? ""
         : '- ${_quoteList[_quoteIndex].author} -';
   }
 
-  List<Quote> _quoteList = [];
+  List<Quote> _quoteList = [Quote(id: 0, quote: 'Fetching...')];
   String _category = 'general';
 
   String get category => _category;
@@ -54,6 +81,14 @@ class QuoteController extends ChangeNotifier {
   }
 
   Future<void> _getNextQuotesBatch() async {
-    _quoteList = await _backend.get100Quotes(_category);
+    _quoteList = await _backend.getQuotes(_category);
+  }
+
+  Future<int> getNumberOfFavourites() async {
+    return await _backend.getNumberOfFavourites();
+  }
+
+  Future<int> getNumberOfUserCreated() async {
+    return await _backend.getNumberOfUserCreated();
   }
 }

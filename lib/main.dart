@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:motivation/screens/quotes.dart';
 import 'package:motivation/models/quote.dart';
 import 'package:motivation/screens/all_background.dart';
 import 'package:motivation/screens/all_fonts.dart';
@@ -18,7 +17,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    final ThemeData themeData = ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.light);
     return MultiProvider(
         providers: [
           ChangeNotifierProvider<QuoteController>(
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         ],
       builder: (context, child) {
         return MaterialApp(
+          theme: themeData,
           title: 'Motivation',
           initialRoute: '/',
           routes: {
