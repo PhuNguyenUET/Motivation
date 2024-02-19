@@ -73,6 +73,7 @@ class QuoteRepository {
       quote.toMap(),
       where: 'id = ?',
       whereArgs: [quote.id],
+      conflictAlgorithm: ConflictAlgorithm.replace
     );
   }
 

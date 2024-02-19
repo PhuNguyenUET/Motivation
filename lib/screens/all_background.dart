@@ -13,17 +13,14 @@ class AllBackground extends StatefulWidget {
 }
 
 class _AllBackgroundState extends State<AllBackground> {
-  List<Image> images = [];
+  List<AssetImage> images = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     for (int i = 0; i < 20; i++) {
-      images.add(Image.asset(
-        'assets/wallpaper_$i.jpg',
-        fit: BoxFit.cover, // Fixes border issues
-      ));
+      images.add(AssetImage('assets/wallpaper_$i.jpg'));
     }
   }
 
@@ -33,15 +30,6 @@ class _AllBackgroundState extends State<AllBackground> {
     imageCache.clear();
     imageCache.clearLiveImages();
     super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    for (int i = 0; i < 20; i++) {
-      precacheImage(images[i].image, context);
-    }
   }
 
   @override
@@ -83,7 +71,10 @@ class _AllBackgroundState extends State<AllBackground> {
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
-                              child: images[index],
+                              child: Image(
+                                image: images[index],
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),

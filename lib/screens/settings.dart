@@ -71,7 +71,9 @@ class _SettingsTabState extends State<SettingsTab> {
                 SettingsTile(
                   name: 'Add your own',
                   icon: Symbols.text_ad,
-                  func: () {},
+                  func: () {
+                    Navigator.pushReplacementNamed(context, '/quotesadd');
+                  },
                 ),
                 FutureBuilder<int>(
                     future: quoteState.getNumberOfUserCreated(),

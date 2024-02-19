@@ -2,9 +2,9 @@ import 'package:motivation/constants/constants.dart';
 import 'package:motivation/models/userQuote.dart';
 
 class Quote {
-  final int id;
-  final String quote;
-  final String? author;
+  final int? id;
+  String quote;
+  String? author;
   final int? categoryId;
   bool? favourite = false;
 
@@ -19,11 +19,10 @@ class Quote {
   );
 
   Quote.fromUserQuote(UserQuote q, int cateId):
-      id = q.id!,
+      id = null,
       quote = q.quote,
-      author = '',
-      categoryId = cateId,
-      favourite = q.favourite;
+      author = q.author,
+      categoryId = cateId;
 
   Map<String, dynamic> toMap() => {
     'id': id,

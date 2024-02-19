@@ -16,26 +16,13 @@ class ThemeSelection extends StatefulWidget {
 
 class _ThemeSelectionState extends State<ThemeSelection> {
 
-  List<Image> images = [];
+  List<AssetImage> images = [];
 
   @override
   void initState() {
     super.initState();
     for (int i = 0; i < 10; i++) {
-      images.add(Image.asset(
-        'assets/wallpaper_$i.jpg',
-        fit: BoxFit.cover,
-        width: 140.0,
-        height: 260.0,
-      ));
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    for(int i = 0; i < 10; i++) {
-      precacheImage(images[i].image, context);
+      images.add(AssetImage('assets/wallpaper_$i.jpg'));
     }
   }
 
@@ -100,7 +87,12 @@ class _ThemeSelectionState extends State<ThemeSelection> {
                           },
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10.0),
-                            child: images[index],
+                            child: Image(
+                              image: images[index],
+                              fit: BoxFit.cover,
+                              width: 140.0,
+                              height: 260.0,
+                            ),
                           ),
                         ),
                       ),

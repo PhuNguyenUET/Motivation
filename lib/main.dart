@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motivation/models/quote.dart';
+import 'package:motivation/screens/add_quotes_screen.dart';
 import 'package:motivation/screens/all_background.dart';
 import 'package:motivation/screens/all_fonts.dart';
 import 'package:motivation/screens/home.dart';
@@ -17,6 +18,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    for (int i = 0; i < 20; i++) {
+      precacheImage(AssetImage(
+        'assets/wallpaper_$i.jpg'
+      ), context);
+    }
     final ThemeData themeData = ThemeData(
         useMaterial3: true,
         brightness: Brightness.light);
@@ -38,6 +44,7 @@ class MyApp extends StatelessWidget {
             '/': (context) => const Home(),
             '/allbg': (context) => const AllBackground(),
             '/allfonts': (context) => const AllFonts(),
+            '/quotesadd': (context) => const QuotesAddition(),
           },
         );
       }

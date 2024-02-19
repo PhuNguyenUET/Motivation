@@ -14,10 +14,11 @@ class QuotesService {
 
   Future<String> deleteUserQuote(Quote quote) async {
     int cateId = await _quotesRepository.getQuoteCategoryId(quote);
+    int userCateId = await _quotesRepository.getCategoryId('user-created');
     if (cateId == -1) {
       return "Error updating: category cannot be found";
     }
-    if (cateId != Constants.CATE_USER_CREATED) {
+    if (cateId != userCateId) {
       return "You cannot delete this quote!";
     }
     await _quotesRepository.deleteQuote(quote);
@@ -26,10 +27,11 @@ class QuotesService {
 
   Future<String> updateUserQuote(Quote quote) async {
     int cateId = await _quotesRepository.getQuoteCategoryId(quote);
+    int userCateId = await _quotesRepository.getCategoryId('user-created');
     if (cateId == -1) {
       return "Error updating: category cannot be found";
     }
-    if (cateId != Constants.CATE_USER_CREATED) {
+    if (cateId != userCateId) {
       return "You cannot update this quote!";
     }
     await _quotesRepository.updateQuote(quote);

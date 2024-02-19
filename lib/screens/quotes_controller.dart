@@ -84,6 +84,13 @@ class QuoteController extends ChangeNotifier {
     _quoteList = await _backend.getQuotes(_category);
   }
 
+  Future<void> forceRebuild() async {
+    if (_category == 'user-created') {
+      await _getNextQuotesBatch();
+      notifyListeners();
+    }
+  }
+
   Future<int> getNumberOfFavourites() async {
     return await _backend.getNumberOfFavourites();
   }
