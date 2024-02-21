@@ -1,14 +1,24 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:motivation/constants/button_style.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:motivation/models/quote.dart';
 import 'package:motivation/screens/favourite_icon.dart';
 import 'package:motivation/screens/loading.dart';
+import 'package:motivation/screens/loading_screen.dart';
 import 'package:motivation/screens/quotes_controller.dart';
+import 'package:motivation/screens/save_screen.dart';
 import 'package:motivation/screens/settings.dart';
 import 'package:motivation/screens/theme_select.dart';
 import 'package:motivation/screens/topics.dart';
+import 'package:motivation/services/screenshot_saver.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 import '../decor_controller.dart';
 import '../main.dart';
 
@@ -24,6 +34,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     var quoteState = Provider.of<QuoteController>(context, listen: true);
     var decorState = Provider.of<DecorController>(context, listen: true);
+    var loadingOverlay = LoadingScreen().loadingOverlay;
 
     void _showSettingsPanel() {
       showModalBottomSheet<dynamic>(
@@ -190,9 +201,32 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      Overlay.of(context).insert(loadingOverlay);
+                      Uint8List img = await ScreenshotSaver().captureScreen(AssetImage('assets/wallpaper_${decorState.backgroundIndex}.jpg'), quoteState.getCurrentQuote(), quoteState.getCurrentAuthor(), 'Font${decorState.fontIndex}');
+                      final tempDir = await getTemporaryDirectory();
+                      File file = await File('${tempDir.path}/image.png').create();
+                      file.writeAsBytesSync(img);
+                      loadingOverlay.remove();
+                      await Share.shareXFiles(
+                        [
+                          new XFile('${tempDir.path}/image.png'),
+                        ],
+                        subject: 'Shared quote',
+                      );
+                    },
                     icon: const Icon(
                       Symbols.share,
+                      size: 50.0,
+                      weight: 200,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 20.0),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Symbols.bookmark_add,
                       size: 50.0,
                       weight: 200,
                       color: Colors.white,

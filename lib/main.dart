@@ -4,6 +4,7 @@ import 'package:motivation/screens/add_quotes_screen.dart';
 import 'package:motivation/screens/all_background.dart';
 import 'package:motivation/screens/all_fonts.dart';
 import 'package:motivation/screens/home.dart';
+import 'package:motivation/screens/loading_screen.dart';
 import 'package:motivation/screens/quotes_controller.dart';
 import 'package:provider/provider.dart';
 import 'decor_controller.dart';

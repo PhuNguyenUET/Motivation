@@ -3,6 +3,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:motivation/constants/constants.dart';
 import 'package:motivation/models/userQuote.dart';
+import 'package:motivation/screens/loading.dart';
 import 'package:motivation/screens/quotes_addition_controller.dart';
 import 'package:motivation/screens/quotes_controller.dart';
 import 'package:motivation/screens/your_quote_tile.dart';
@@ -192,57 +193,65 @@ class _QuotesAdditionState extends State<QuotesAddition> {
                     AsyncSnapshot<List<Quote>> snapshot) {
                   if (snapshot.hasData) {
                     userCreated = snapshot.data ?? [];
-                  }
-                  return Expanded(
-                    flex: 5,
-                    child: AnimationLimiter(
-                      child: ListView.builder(
-                          itemCount: userCreated.length,
-                          scrollDirection: Axis.vertical,
-                          itemBuilder: (BuildContext context, int index) {
-                            return AnimationConfiguration.staggeredList(
-                              position: index,
-                              duration: const Duration(milliseconds: 700),
-                              child: SlideAnimation(
-                                verticalOffset: 1000.0,
-                                child: FadeInAnimation(
-                                  child: Padding(
+                    return Expanded(
+                      flex: 5,
+                      child: AnimationLimiter(
+                        child: ListView.builder(
+                            itemCount: userCreated.length,
+                            scrollDirection: Axis.vertical,
+                            itemBuilder: (BuildContext context, int index) {
+                              return AnimationConfiguration.staggeredList(
+                                position: index,
+                                duration: const Duration(milliseconds: 700),
+                                child: SlideAnimation(
+                                  verticalOffset: 500.0,
+                                  child: FadeInAnimation(
+                                    child: Padding(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 3.0, horizontal: 4.0),
                                       child: YourQuoteTile(
-                                          quote: userCreated[index],
+                                        quote: userCreated[index],
                                         editFunction: () {
-                                            setState(() {
-                                              currentQuote = userCreated[index];
-                                              quote = userCreated[index].quote;
-                                              author = userCreated[index].author ?? '';
-                                            });
-                                            quoteController.text = quote;
-                                            authorController.text = author ?? '';
+                                          setState(() {
+                                            currentQuote = userCreated[index];
+                                            quote = userCreated[index].quote;
+                                            author =
+                                                userCreated[index].author ?? '';
+                                          });
+                                          quoteController.text = quote;
+                                          authorController.text = author ?? '';
                                         },
                                         deleteFunction: () async {
-                                            if(userCreated[index] == currentQuote) {
-                                              setState(() {
-                                                currentQuote = null;
-                                                quote = '';
-                                                author = '';
-                                              });
-                                            }
-                                            await quoteAdditionState.deleteQuote(userCreated[index]);
+                                          if (userCreated[index] ==
+                                              currentQuote) {
                                             setState(() {
-                                              userCreated = [];
+                                              currentQuote = null;
+                                              quote = '';
+                                              author = '';
                                             });
-                                            quoteController.text = quote;
-                                            authorController.text = author ?? '';
+                                          }
+                                          await quoteAdditionState.deleteQuote(
+                                              userCreated[index]);
+                                          setState(() {
+                                            userCreated = [];
+                                          });
+                                          quoteController.text = quote;
+                                          authorController.text = author ?? '';
                                         },
                                       ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          }),
-                    ),
-                  );
+                              );
+                            }),
+                      ),
+                    );
+                  } else {
+                    return Expanded(
+                      flex: 5,
+                      child: Loading(),
+                    );
+                  }
                 })
           ]),
         ),

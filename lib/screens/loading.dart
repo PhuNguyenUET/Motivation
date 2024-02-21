@@ -5,7 +5,7 @@ import 'package:motivation/utilities/hex_color.dart';
 class Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
+    return Center(
       child: Container(
         color: Color.fromRGBO(0, 0, 0, 0.5),
         child: Center(

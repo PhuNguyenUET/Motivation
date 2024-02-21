@@ -108,7 +108,7 @@ class _TopicsState extends State<Topics> {
                             }),
                       ),
                     )
-                  : Center(),
+                  : Loading(),
             ],
           );
         });
