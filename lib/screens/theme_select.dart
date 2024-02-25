@@ -4,7 +4,7 @@ import 'package:motivation/main.dart';
 import 'package:motivation/screens/font_tile.dart';
 import 'package:provider/provider.dart';
 
-import '../decor_controller.dart';
+import 'user_controller.dart';
 
 class ThemeSelection extends StatefulWidget {
 
@@ -81,9 +81,9 @@ class _ThemeSelectionState extends State<ThemeSelection> {
                         padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 4.0),
                         child: GestureDetector(
                           behavior: HitTestBehavior.translucent,
-                          onTap: () => {
-                            decorState.backgroundIndex = index,
-                            Navigator.pop(context)
+                          onTap: () async {
+                            await decorState.setBackgroundIndex(index);
+                            Navigator.pop(context);
                           },
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(10.0),
@@ -148,17 +148,17 @@ class _ThemeSelectionState extends State<ThemeSelection> {
                             children: [
                               GestureDetector(
                                   behavior: HitTestBehavior.translucent,
-                                  onTap: () => {
-                                    decorState.fontIndex = index,
-                                    Navigator.pop(context)
+                                  onTap: () async {
+                                    await decorState.setFontIndex(index);;
+                                    Navigator.pop(context);
                                   },
                                   child: FontTile(font: 'Font$index')
                               ),
                               GestureDetector(
                                   behavior: HitTestBehavior.translucent,
-                                  onTap: () => {
-                                    decorState.fontIndex = index + 5,
-                                    Navigator.pop(context)
+                                  onTap: () async {
+                                    await decorState.setFontIndex(index + 5);
+                                    Navigator.pop(context);
                                   },
                                   child: FontTile(font: 'Font${index + 5}')
                               ),

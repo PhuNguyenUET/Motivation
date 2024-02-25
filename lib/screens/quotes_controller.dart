@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:motivation/main.dart';
 import 'package:motivation/screens/quote_integration.dart';
-import '../decor_controller.dart';
+import 'user_controller.dart';
 import '../models/quote.dart';
 
 class QuoteController extends ChangeNotifier {

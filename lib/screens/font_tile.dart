@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:motivation/main.dart';
 import 'package:provider/provider.dart';
 
-import '../decor_controller.dart';
+import 'user_controller.dart';
 
 class FontTile extends StatelessWidget {
   final String font;
@@ -20,7 +20,7 @@ class FontTile extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.0),
                 image: DecorationImage(
-                  image: AssetImage('assets/wallpaper_${decorState.backgroundIndex}.jpg'),
+                  image: AssetImage('assets/wallpaper_${decorState.getBackgroundIndex()}.jpg'),
                   fit: BoxFit.cover,
                 )
             ),

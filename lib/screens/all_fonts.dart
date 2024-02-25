@@ -4,7 +4,7 @@ import 'package:motivation/main.dart';
 import 'package:motivation/screens/font_tile.dart';
 import 'package:provider/provider.dart';
 
-import '../decor_controller.dart';
+import 'user_controller.dart';
 
 class AllFonts extends StatelessWidget {
   const AllFonts({super.key});
@@ -39,9 +39,9 @@ class AllFonts extends StatelessWidget {
                           child: FadeInAnimation(
                               child: GestureDetector(
                                   behavior: HitTestBehavior.translucent,
-                                  onTap: () => {
-                                        decorState.fontIndex = index,
-                                        Navigator.pop(context)
+                                  onTap: () async {
+                                        await decorState.setFontIndex(index);
+                                        Navigator.pop(context);
                                       },
                                   child: FontTile(font: 'Font$index')))));
                 }),

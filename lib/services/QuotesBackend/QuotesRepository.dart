@@ -133,6 +133,15 @@ class QuoteRepository {
     return maps.map((e) => Quote.fromJson(e)).toList();
   }
 
+  Future<String> getCategoryById(int cateId) async {
+    final dbInstance = await QuotesDatabase.instance;
+    final db = dbInstance.database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT * FROM categories WHERE id = $cateId;');
+
+    return maps.map((e) => e['category'] as String).toList()[0];
+  }
+
   Future<int> getNumberOfQuotesInCategory(int cateId) async {
     final dbInstance = await QuotesDatabase.instance;
     final db = dbInstance.database;

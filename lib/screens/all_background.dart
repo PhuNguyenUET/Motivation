@@ -3,7 +3,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:motivation/main.dart';
 import 'package:provider/provider.dart';
 
-import '../decor_controller.dart';
+import 'user_controller.dart';
 
 class AllBackground extends StatefulWidget {
   const AllBackground({super.key});
@@ -65,9 +65,9 @@ class _AllBackgroundState extends State<AllBackground> {
                               vertical: 8.0, horizontal: 4.0),
                           child: GestureDetector(
                             behavior: HitTestBehavior.translucent,
-                            onTap: () => {
-                              decorState.backgroundIndex = index,
-                              Navigator.pop(context)
+                            onTap: () async {
+                              await decorState.setBackgroundIndex(index);
+                              Navigator.pop(context);
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),

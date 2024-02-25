@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:motivation/screens/quotes_controller.dart';
+import 'package:motivation/screens/reminders_screen.dart';
 import 'package:motivation/screens/settings_tile.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +13,24 @@ class SettingsTab extends StatefulWidget {
 }
 
 class _SettingsTabState extends State<SettingsTab> {
+
+  void _showReminderPanel() {
+    showModalBottomSheet<dynamic>(
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext bc) {
+          return Wrap(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.8,
+                padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                child: ReminderScreen(),
+              )
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     var quoteState = Provider.of<QuoteController>(context, listen: true);
@@ -53,9 +72,11 @@ class _SettingsTabState extends State<SettingsTab> {
                   func: () {},
                 ),
                 SettingsTile(
-                  name: 'Reminder',
+                  name: 'Reminders',
                   icon: Symbols.notifications,
-                  func: () {},
+                  func: () {
+                    Navigator.pushReplacementNamed(context, '/reminders');
+                  },
                 ),
                 SizedBox(height: 7),
                 Text(

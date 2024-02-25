@@ -68,6 +68,20 @@ class QuotesService {
     }
   }
 
+  Future<String> getCategoryById(int cateId) async {
+    if(cateId == 0) {
+      return 'general';
+    }
+    return await _quotesRepository.getCategoryById(cateId);
+  }
+
+  Future<int> getIdFromCategory(String category) async {
+    if(category == 'general') {
+      return 0;
+    }
+    return await _quotesRepository.getCategoryId(category);
+  }
+
   Future<List<String>> getAllCategories() async {
     return await _quotesRepository.getCategoryList();
   }
