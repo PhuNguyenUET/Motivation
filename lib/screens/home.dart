@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:motivation/constants/button_style.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:motivation/models/quote.dart';
+import 'package:motivation/screens/collection_addition_screen.dart';
 import 'package:motivation/screens/favourite_icon.dart';
 import 'package:motivation/screens/loading.dart';
 import 'package:motivation/screens/loading_screen.dart';
@@ -32,6 +33,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  var backgroundImage = AssetImage('assets/loading_background.jpg');
+
   @override
   Widget build(BuildContext context) {
     var quoteState = Provider.of<QuoteController>(context, listen: true);
@@ -52,6 +55,26 @@ class _HomeState extends State<Home> {
                       .height * 0.8,
                   padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                   child: const SettingsTab(),
+                )
+              ],
+            );
+          });
+    }
+
+    void _showUserQuoteAdditonPanel(Quote currentQuote) {
+      showModalBottomSheet<dynamic>(
+          isScrollControlled: true,
+          context: context,
+          builder: (BuildContext bc) {
+            return Wrap(
+              children: [
+                Container(
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height * 0.8,
+                  padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  child: CollectionAdditionScreen(currentQuote: currentQuote),
                 )
               ],
             );
@@ -112,14 +135,14 @@ class _HomeState extends State<Home> {
               if(snapshot.hasError) {
                 print(snapshot.error);
               }
+              if (snapshot.connectionState == ConnectionState.done) {
+                backgroundImage = AssetImage('assets/wallpaper_${decorState
+                    .getBackgroundIndex()}.jpg');
+              }
               return Container(
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                      image:
-                      snapshot.connectionState == ConnectionState.done
-                          ? AssetImage('assets/wallpaper_${decorState
-                          .getBackgroundIndex()}.jpg')
-                          : AssetImage('assets/loading_background.jpg'),
+                      image: backgroundImage,
                       fit: BoxFit.cover,
                     )),
                 child: SafeArea(
@@ -267,9 +290,12 @@ class _HomeState extends State<Home> {
                           const SizedBox(width: 20.0),
                           IconButton(
                             onPressed: () async {
-                              NotificationService().showNotification(
-                                  title: 'Fuck this noti', body: 'Fuck it');
-                              ;
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting ||
+                                  quoteState.noQuotes) {
+                                return;
+                              }
+                              _showUserQuoteAdditonPanel(quoteState.getCurrentQuoteObject());
                             },
                             icon: const Icon(
                               Symbols.bookmark_add,

@@ -50,7 +50,9 @@ class _TopicsState extends State<Topics> {
                         child: Text('Make your own mix',
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w300)))),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/collections');
+                },
               ),
               SizedBox(
                 height: 10,

@@ -3,7 +3,15 @@ import 'package:motivation/services/NotificationBackend/NotificationController.d
 import '../models/notification_setting.dart';
 
 class NotificationIntegration {
-  final _backend = NotificationController();
+  final NotificationController _backend = NotificationController();
+
+  NotificationIntegration._internal();
+
+  factory NotificationIntegration() {
+    return _instance;
+  }
+
+  static final NotificationIntegration _instance = NotificationIntegration._internal();
 
   Future<NotificationSetting> getNotificationSettings() async {
     return await _backend.getNotificationSettings();

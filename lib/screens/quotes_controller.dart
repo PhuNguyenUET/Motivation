@@ -6,7 +6,8 @@ import '../models/quote.dart';
 
 class QuoteController extends ChangeNotifier {
   Future<void> initInstance() async {
-    if (_quoteList.length <= 1) {
+    if (_quoteList.isEmpty || _quoteList[0].id == 0) {
+      _quoteIndex = 0;
       await _getNextQuotesBatch();
     }
   }
@@ -18,18 +19,31 @@ class QuoteController extends ChangeNotifier {
   bool _noQuotes = false;
   bool get noQuotes => _noQuotes;
 
+  bool _isCategoryUserCreated = false;
+  bool get isCategoryUserCreated => _isCategoryUserCreated;
+
   Future<void> increaseQuoteIndex() async {
     _quoteIndex ++;
     if (_quoteIndex == _quoteList.length) {
-      if(_category == 'favourites') {
+      if(_category == 'favourites' || _category == 'user-created') {
         _quoteIndex --;
         return;
       }
-      await _getNextQuotesBatch();
+      if (!_isCategoryUserCreated) {
+        await _getNextQuotesBatch();
+      }
       _quoteIndex = 0;
     }
     notifyListeners();
   }
+
+   void setCategoryUserCreated(String category, List<Quote> quotes) {
+     _quoteIndex = 0;
+     _category = category;
+     _isCategoryUserCreated = true;
+     _quoteList = quotes;
+     notifyListeners();
+   }
 
   void decreaseQuoteIndex() {
     if (_quoteIndex == 0) {
@@ -46,6 +60,10 @@ class QuoteController extends ChangeNotifier {
     }
     _noQuotes = false;
     return _quoteList[_quoteIndex].quote;
+  }
+
+  Quote getCurrentQuoteObject() {
+    return _quoteList[_quoteIndex];
   }
 
   Future<void> changeFavouriteCurrentQuote() async {
@@ -75,17 +93,21 @@ class QuoteController extends ChangeNotifier {
 
   String get category => _category;
   Future<void> setCategory(String cate) async {
+    _quoteIndex = 0;
     _category = cate;
+    _isCategoryUserCreated = false;
     await _getNextQuotesBatch();
     notifyListeners();
   }
 
   Future<void> _getNextQuotesBatch() async {
+    _quoteIndex = 0;
     _quoteList = await _backend.getQuotes(_category);
   }
 
   Future<void> forceRebuild() async {
     if (_category == 'user-created') {
+      _quoteIndex = 0;
       await _getNextQuotesBatch();
       notifyListeners();
     }

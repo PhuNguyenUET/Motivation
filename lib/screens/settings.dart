@@ -87,7 +87,9 @@ class _SettingsTabState extends State<SettingsTab> {
                 SettingsTile(
                   name: 'Collections',
                   icon: Symbols.collections_bookmark,
-                  func: () {},
+                  func: () {
+                    Navigator.pushReplacementNamed(context, '/collections');
+                  },
                 ),
                 SettingsTile(
                   name: 'Add your own',

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:motivation/models/quote.dart';
+import 'package:motivation/screens/QuoteInCollectionScreen.dart';
 import 'package:motivation/screens/add_quotes_screen.dart';
 import 'package:motivation/screens/all_background.dart';
 import 'package:motivation/screens/all_fonts.dart';
@@ -9,6 +10,8 @@ import 'package:motivation/screens/loading_screen.dart';
 import 'package:motivation/screens/quotes_controller.dart';
 import 'package:motivation/screens/reminder_screen_controller.dart';
 import 'package:motivation/screens/reminders_screen.dart';
+import 'package:motivation/screens/user_collection_screen.dart';
+import 'package:motivation/screens/user_created_category_controller.dart';
 import 'package:motivation/services/NotificationBackend/NotificationController.dart';
 import 'package:motivation/services/post_notification_service.dart';
 import 'package:provider/provider.dart';
@@ -49,6 +52,9 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<ReminderController >(
             create: (_) => ReminderController(),
           ),
+          ChangeNotifierProvider<UserCreatedCategoryController >(
+            create: (_) => UserCreatedCategoryController(),
+          ),
         ],
       builder: (context, child) {
         return MaterialApp(
@@ -61,6 +67,8 @@ class MyApp extends StatelessWidget {
             '/allfonts': (context) => const AllFonts(),
             '/quotesadd': (context) => const QuotesAddition(),
             '/reminders': (context) => const ReminderScreen(),
+            '/collections': (context) => const UserCollectionScreen(),
+            '/quoteInCate': (context) => const QuoteInCollectionScreen()
           },
         );
       }
