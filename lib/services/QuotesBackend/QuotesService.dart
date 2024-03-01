@@ -83,7 +83,9 @@ class QuotesService {
   }
 
   Future<List<String>> getAllCategories() async {
-    return await _quotesRepository.getCategoryList();
+    List<String> res = ['general'];
+    res.addAll(await _quotesRepository.getCategoryList());
+    return res;
   }
 
   Future<List<String>> getRandomCategories() async {

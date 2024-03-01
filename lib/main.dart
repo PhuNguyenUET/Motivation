@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:motivation/models/quote.dart';
-import 'package:motivation/screens/QuoteInCollectionScreen.dart';
-import 'package:motivation/screens/add_quotes_screen.dart';
-import 'package:motivation/screens/all_background.dart';
-import 'package:motivation/screens/all_fonts.dart';
-import 'package:motivation/screens/home.dart';
-import 'package:motivation/screens/loading_screen.dart';
-import 'package:motivation/screens/quotes_controller.dart';
-import 'package:motivation/screens/reminder_screen_controller.dart';
-import 'package:motivation/screens/reminders_screen.dart';
-import 'package:motivation/screens/user_collection_screen.dart';
-import 'package:motivation/screens/user_created_category_controller.dart';
+import 'package:motivation/screens/CollectionScreen/QuoteInCollectionScreen.dart';
+import 'package:motivation/screens/Notification/category_selection_screen.dart';
+import 'package:motivation/screens/Notification/sound_selection_screen.dart';
+import 'package:motivation/screens/QuoteAdditionScreen/add_quotes_screen.dart';
+import 'package:motivation/screens/Font&Theme/all_background.dart';
+import 'package:motivation/screens/Font&Theme/all_fonts.dart';
+import 'package:motivation/screens/Home/home.dart';
+import 'package:motivation/screens/UtilityScreens/loading_screen.dart';
+import 'package:motivation/screens/Home/quotes_controller.dart';
+import 'package:motivation/screens/Notification/reminder_screen_controller.dart';
+import 'package:motivation/screens/Notification/reminders_screen.dart';
+import 'package:motivation/screens/CollectionScreen/user_collection_screen.dart';
+import 'package:motivation/screens/CollectionScreen/user_created_category_controller.dart';
 import 'package:motivation/services/NotificationBackend/NotificationController.dart';
 import 'package:motivation/services/post_notification_service.dart';
 import 'package:provider/provider.dart';
-import 'screens/user_controller.dart';
+import 'screens/Home/user_controller.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -35,7 +37,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     for (int i = 0; i < 20; i++) {
       precacheImage(AssetImage(
-        'assets/wallpaper_$i.jpg'
+        'assets/images/wallpaper_$i.jpg'
       ), context);
     }
     final ThemeData themeData = ThemeData(
@@ -68,7 +70,9 @@ class MyApp extends StatelessWidget {
             '/quotesadd': (context) => const QuotesAddition(),
             '/reminders': (context) => const ReminderScreen(),
             '/collections': (context) => const UserCollectionScreen(),
-            '/quoteInCate': (context) => const QuoteInCollectionScreen()
+            '/quoteInCate': (context) => const QuoteInCollectionScreen(),
+            '/selectCateReminder': (context) => const CategorySelectionScreen(),
+            '/selectSoundReminder': (context) => const SoundSelectionScreen(),
           },
         );
       }
