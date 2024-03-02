@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -18,6 +20,10 @@ class SoundSelectionScreen extends StatefulWidget {
 class _CategorySelectionScreenState extends State<SoundSelectionScreen> {
   int? currentSound;
   final player = AudioPlayer();
+
+  final _streamController = StreamController<int>.broadcast();
+
+  Stream<int> get soundStream => _streamController.stream;
 
   @override
   void dispose() {
@@ -66,7 +72,7 @@ class _CategorySelectionScreenState extends State<SoundSelectionScreen> {
                         child: snapshot.connectionState == ConnectionState.done
                             ? AnimationLimiter(
                           child: ListView.builder(
-                              itemCount: 11,
+                              itemCount: 12,
                               scrollDirection: Axis.vertical,
                               itemBuilder:
                                   (BuildContext context, int index) {
@@ -85,11 +91,11 @@ class _CategorySelectionScreenState extends State<SoundSelectionScreen> {
                                               horizontal: 4.0),
                                           child: SoundTile(
                                             soundId: index,
-                                            isSelected: index == currentSound,
+                                            soundStream: soundStream,
+                                            currentSelectedId: currentSound,
                                             onPress: () {
-                                              setState(() {
-                                                currentSound = index;
-                                              });
+                                              currentSound = index;
+                                              _streamController.add(currentSound!);
                                             },
                                             player: player,
                                           )),

@@ -6,10 +6,11 @@ import 'package:material_symbols_icons/symbols.dart';
 
 class SoundTile extends StatefulWidget {
   int soundId;
-  bool isSelected;
   void Function()? onPress;
+  Stream? soundStream;
+  int? currentSelectedId;
   AudioPlayer player;
-  SoundTile({super.key, required this.soundId, required this.isSelected, required this.onPress, required this.player});
+  SoundTile({super.key, required this.soundId, required this.currentSelectedId, required this.soundStream, required this.onPress, required this.player});
 
   @override
   State<SoundTile> createState() => _SoundListState();
@@ -18,13 +19,17 @@ class SoundTile extends StatefulWidget {
 class _SoundListState extends State<SoundTile> {
   PlayerState? _playerState = PlayerState.stopped;
 
+  int? currentSelectedId;
+
   StreamSubscription? _playerCompleteSubscription;
   StreamSubscription? _playerStateChangeSubscription;
+  StreamSubscription? _soundSubscription;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    currentSelectedId = widget.currentSelectedId;
     _initStreams();
   }
 
@@ -32,6 +37,7 @@ class _SoundListState extends State<SoundTile> {
   void dispose() {
     _playerCompleteSubscription?.cancel();
     _playerStateChangeSubscription?.cancel();
+    _soundSubscription?.cancel();
     super.dispose();
   }
 
@@ -50,6 +56,11 @@ class _SoundListState extends State<SoundTile> {
   }
 
   void _initStreams() {
+    _soundSubscription = widget.soundStream!.listen((event) {
+      setState(() {
+        currentSelectedId = event;
+      });
+    });
     _playerCompleteSubscription = widget.player.onPlayerComplete.listen((event) {
       setState(() {
         _playerState = PlayerState.stopped;
@@ -71,7 +82,7 @@ class _SoundListState extends State<SoundTile> {
     return GestureDetector(
       onTap: widget.onPress,
       child: Card(
-        shape: widget.isSelected ? RoundedRectangleBorder(
+        shape: widget.soundId == currentSelectedId ? RoundedRectangleBorder(
             side: BorderSide(
               color: Colors.blueAccent,
             )
@@ -82,7 +93,7 @@ class _SoundListState extends State<SoundTile> {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(onPressed: widget.onPress, icon: widget.isSelected ? Icon(Icons.check_circle_outline,) : Icon(Icons.circle_outlined)),
+              IconButton(onPressed: widget.onPress, icon: widget.soundId == currentSelectedId  ? Icon(Icons.check_circle_outline,) : Icon(Icons.circle_outlined)),
             ],
           ),
           leading: Row(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:motivation/screens/Notification/category_tile.dart';
@@ -16,6 +18,10 @@ class CategorySelectionScreen extends StatefulWidget {
 class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   String currentCategory = '';
   List<String> categoryList = [];
+
+  final _streamController = StreamController<String>.broadcast();
+
+  Stream<String> get cateStream => _streamController.stream;
 
   @override
   Widget build(BuildContext context) {
@@ -82,15 +88,12 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                                                         horizontal: 4.0),
                                                 child: CategoryTile(
                                                   category: categoryList[index],
-                                                  isSelected:
-                                                      categoryList[index] ==
-                                                          currentCategory,
+                                                  cateStream: cateStream,
                                                   onPress: () {
-                                                    setState(() {
-                                                      currentCategory =
-                                                          categoryList[index];
-                                                    });
+                                                    currentCategory = categoryList[index];
+                                                    _streamController.add(currentCategory);
                                                   },
+                                                  currentSelectedCate: currentCategory,
                                                 )),
                                           ),
                                         ),
