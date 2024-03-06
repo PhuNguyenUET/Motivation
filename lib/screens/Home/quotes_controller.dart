@@ -22,6 +22,10 @@ class QuoteController extends ChangeNotifier {
   bool _isCategoryUserCreated = false;
   bool get isCategoryUserCreated => _isCategoryUserCreated;
 
+  bool quoteNotAtStart() {
+    return _quoteIndex != 0;
+  }
+
   Future<void> increaseQuoteIndex() async {
     _quoteIndex ++;
     if (_quoteIndex == _quoteList.length) {

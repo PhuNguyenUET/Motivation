@@ -8,6 +8,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:motivation/models/quote.dart';
 import 'package:motivation/screens/CollectionScreen/collection_addition_screen.dart';
 import 'package:motivation/screens/Home/favourite_icon.dart';
+import 'package:motivation/screens/Home/quote_displayer.dart';
 import 'package:motivation/screens/UtilityScreens/loading.dart';
 import 'package:motivation/screens/UtilityScreens/loading_screen.dart';
 import 'package:motivation/screens/Home/quotes_controller.dart';
@@ -49,10 +50,7 @@ class _HomeState extends State<Home> {
             return Wrap(
               children: [
                 Container(
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.8,
+                  height: MediaQuery.of(context).size.height * 0.8,
                   padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                   child: const SettingsTab(),
                 )
@@ -69,10 +67,7 @@ class _HomeState extends State<Home> {
             return Wrap(
               children: [
                 Container(
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.8,
+                  height: MediaQuery.of(context).size.height * 0.8,
                   padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                   child: CollectionAdditionScreen(currentQuote: currentQuote),
                 )
@@ -89,10 +84,7 @@ class _HomeState extends State<Home> {
             return Wrap(
               children: [
                 Container(
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.8,
+                  height: MediaQuery.of(context).size.height * 0.8,
                   padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                   child: ThemeSelection(),
                 )
@@ -109,10 +101,7 @@ class _HomeState extends State<Home> {
             return Wrap(
               children: [
                 Container(
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.8,
+                  height: MediaQuery.of(context).size.height * 0.8,
                   padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                   child: const Topics(),
                 )
@@ -130,21 +119,20 @@ class _HomeState extends State<Home> {
         resizeToAvoidBottomInset: false,
         body: FutureBuilder<void>(
             future: initiateData(),
-            builder: (BuildContext context,
-                AsyncSnapshot<void> snapshot) {
-              if(snapshot.hasError) {
+            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+              if (snapshot.hasError) {
                 print(snapshot.error);
               }
               if (snapshot.connectionState == ConnectionState.done) {
-                backgroundImage = AssetImage('assets/images/wallpaper_${decorState
-                    .getBackgroundIndex()}.jpg');
+                backgroundImage = AssetImage(
+                    'assets/images/wallpaper_${decorState.getBackgroundIndex()}.jpg');
               }
               return Container(
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: backgroundImage,
-                      fit: BoxFit.cover,
-                    )),
+                  image: backgroundImage,
+                  fit: BoxFit.cover,
+                )),
                 child: SafeArea(
                   child: Column(
                     children: [
@@ -166,9 +154,8 @@ class _HomeState extends State<Home> {
                             label: Text(
                               quoteState.category,
                               style: TextStyle(
-                                  fontFamily: 'Font${snapshot.connectionState ==
-                                      ConnectionState.done ? decorState
-                                      .getFontIndex() : 0}',
+                                  fontFamily:
+                                      'Font${snapshot.connectionState == ConnectionState.done ? decorState.getFontIndex() : 0}',
                                   fontSize: 20.0,
                                   color: Colors.white),
                             ),
@@ -199,55 +186,9 @@ class _HomeState extends State<Home> {
                         ],
                       ),
                       Expanded(
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onVerticalDragEnd: (details) async {
-                            if (details.primaryVelocity! < 0) {
-                              await quoteState.increaseQuoteIndex();
-                            } else if (details.primaryVelocity! > 0) {
-                              quoteState.decreaseQuoteIndex();
-                            }
-                          },
-                          onHorizontalDragUpdate: (details) {},
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10.0, horizontal: 15.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  snapshot.connectionState ==
-                                      ConnectionState.waiting
-                                      ? 'Fetching...'
-                                      : quoteState.getCurrentQuote(),
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontFamily: 'Font${snapshot
-                                          .connectionState ==
-                                          ConnectionState.done ? decorState
-                                          .getFontIndex() : 0}',
-                                      color: Colors.white,
-                                      fontSize: 25.0),
-                                ),
-                                Text(
-                                  snapshot.connectionState ==
-                                      ConnectionState.waiting
-                                      ? ''
-                                      : quoteState.getCurrentAuthor(),
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontFamily: 'Font${snapshot
-                                          .connectionState ==
-                                          ConnectionState.done ? decorState
-                                          .getFontIndex() : 0}',
-                                      color: Colors.white,
-                                      fontSize: 15.0),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
+                        child: QuoteDisplay(
+                            isWaiting: snapshot.connectionState ==
+                                ConnectionState.waiting),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -256,21 +197,21 @@ class _HomeState extends State<Home> {
                           IconButton(
                             onPressed: () async {
                               if (snapshot.connectionState ==
-                                  ConnectionState.waiting ||
+                                      ConnectionState.waiting ||
                                   quoteState.noQuotes) {
                                 return;
                               }
                               Overlay.of(context).insert(loadingOverlay);
-                              Uint8List img = await ScreenshotSaver()
-                                  .captureScreen(AssetImage(
-                                  'assets/images/wallpaper_${decorState
-                                      .getBackgroundIndex()}.jpg'),
+                              Uint8List img = await ScreenshotSaver().captureScreen(
+                                  AssetImage(
+                                      'assets/images/wallpaper_${decorState.getBackgroundIndex()}.jpg'),
                                   quoteState.getCurrentQuote(),
                                   quoteState.getCurrentAuthor(),
                                   'Font${decorState.getFontIndex()}');
                               final tempDir = await getTemporaryDirectory();
-                              File file = await File(
-                                  '${tempDir.path}/image.png').create();
+                              File file =
+                                  await File('${tempDir.path}/image.png')
+                                      .create();
                               file.writeAsBytesSync(img);
                               loadingOverlay.remove();
                               await Share.shareXFiles(
@@ -291,11 +232,12 @@ class _HomeState extends State<Home> {
                           IconButton(
                             onPressed: () async {
                               if (snapshot.connectionState ==
-                                  ConnectionState.waiting ||
+                                      ConnectionState.waiting ||
                                   quoteState.noQuotes) {
                                 return;
                               }
-                              _showUserQuoteAdditonPanel(quoteState.getCurrentQuoteObject());
+                              _showUserQuoteAdditonPanel(
+                                  quoteState.getCurrentQuoteObject());
                             },
                             icon: const Icon(
                               Symbols.bookmark_add,
@@ -313,7 +255,6 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               );
-            })
-    );
+            }));
   }
 }
