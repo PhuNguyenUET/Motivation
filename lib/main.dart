@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:motivation/models/quote.dart';
 import 'package:motivation/screens/CollectionScreen/QuoteInCollectionScreen.dart';
 import 'package:motivation/screens/Notification/category_selection_screen.dart';
@@ -23,18 +25,21 @@ import 'package:timezone/timezone.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  NotificationService().initNotification();
+  int? id = await NotificationService.instance.initNotification();
   tz.initializeTimeZones();
   final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(currentTimeZone));
-  runApp(const MyApp());
+  runApp(MyApp(id: id));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key, this.id});
+
+  int? id;
 
   @override
   Widget build(BuildContext context) {
+    print(id);
     for (int i = 0; i < 20; i++) {
       precacheImage(AssetImage(
         'assets/images/wallpaper_$i.jpg'
@@ -59,12 +64,12 @@ class MyApp extends StatelessWidget {
           ),
         ],
       builder: (context, child) {
-        return MaterialApp(
+        return GetMaterialApp(
           theme: themeData,
           title: 'Motivation',
           initialRoute: '/',
           routes: {
-            '/': (context) => const Home(),
+            '/': (context) => Home(startQuoteId: id == null ? 0 : id!,),
             '/allbg': (context) => const AllBackground(),
             '/allfonts': (context) => const AllFonts(),
             '/quotesadd': (context) => const QuotesAddition(),

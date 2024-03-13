@@ -159,4 +159,33 @@ class QuoteRepository {
 
     return maps.map((e) => Quote.fromJson(e)).toList();
   }
+
+  Future<Quote> getQuoteById(int quoteId) async {
+    final dbInstance = await QuotesDatabase.instance;
+    final db = dbInstance.database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT * FROM quotes WHERE id = $quoteId;');
+
+    return maps.map((e) => Quote.fromJson(e)).toList()[0];
+  }
+
+  Future<int> getRandomQuoteIdFromCateId(int cateId) async {
+
+    final dbInstance = await QuotesDatabase.instance;
+    final db = dbInstance.database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT id FROM quotes WHERE id IN (SELECT id FROM quotes WHERE categoryId = $cateId ORDER BY RANDOM() LIMIT 1);');
+
+    return Sqflite.firstIntValue(maps) ?? 0;
+  }
+
+  Future<int> getRandomQuoteId() async {
+
+    final dbInstance = await QuotesDatabase.instance;
+    final db = dbInstance.database;
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT id FROM quotes WHERE id IN (SELECT id FROM quotes ORDER BY RANDOM() LIMIT 1);');
+
+    return Sqflite.firstIntValue(maps) ?? 0;
+  }
 }

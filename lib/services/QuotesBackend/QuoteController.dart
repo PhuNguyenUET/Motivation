@@ -66,4 +66,12 @@ class QuoteController {
   Future<int> getNumberOfUserCreated() async {
     return await _quoteService.getNumberOfUserCreated();
   }
+
+  Future<Quote> getQuoteFromId(int quoteId) async {
+    return await _quoteService.getQuoteFromId(quoteId);
+  }
+
+  Future<int> getRandomQuoteIdFromCate(String category) async {
+    return await _quoteService.getRandomQuoteIdByCate(category);
+  }
 }

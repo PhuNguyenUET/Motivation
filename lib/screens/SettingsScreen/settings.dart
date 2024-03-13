@@ -5,6 +5,8 @@ import 'package:motivation/screens/Notification/reminders_screen.dart';
 import 'package:motivation/screens/SettingsScreen/settings_tile.dart';
 import 'package:provider/provider.dart';
 
+import '../Notification/reminder_screen_controller.dart';
+
 class SettingsTab extends StatefulWidget {
   const SettingsTab({super.key});
 
@@ -34,6 +36,7 @@ class _SettingsTabState extends State<SettingsTab> {
   @override
   Widget build(BuildContext context) {
     var quoteState = Provider.of<QuoteController>(context, listen: true);
+    var reminderState = Provider.of<ReminderController>(context, listen: true);
     int numFav = 0;
     int numUserCreated = 0;
 
@@ -75,6 +78,7 @@ class _SettingsTabState extends State<SettingsTab> {
                   name: 'Reminders',
                   icon: Symbols.notifications,
                   func: () {
+                    reminderState.reachFromHome();
                     Navigator.pushReplacementNamed(context, '/reminders');
                   },
                 ),

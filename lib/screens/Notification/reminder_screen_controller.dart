@@ -10,9 +10,16 @@ class ReminderController extends ChangeNotifier {
   final NotificationIntegration _notificationIntegration = NotificationIntegration();
   final QuoteIntegration _quoteIntegration = QuoteIntegration();
 
+  bool _reachedFromHome = false;
+
   NotificationSetting? _notificationSetting;
 
   Future<String> initInstance() async {
+    if(_reachedFromHome) {
+      _notificationSetting = await _notificationIntegration.getNotificationSettings();
+      _reachedFromHome = false;
+      return getCategory();
+    }
     _notificationSetting ??= await _notificationIntegration.getNotificationSettings();
     return getCategory();
   }
@@ -23,6 +30,10 @@ class ReminderController extends ChangeNotifier {
 
   bool isNotificationAllowed() {
     return _notificationSetting!.notiAllowed!;
+  }
+
+  void reachFromHome() {
+    _reachedFromHome = true;
   }
 
   void changeNotificationAllowance() {

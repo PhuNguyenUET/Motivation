@@ -27,13 +27,14 @@ import 'user_controller.dart';
 import '../../main.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
-
+  int startQuoteId = 0;
+  Home({super.key, required this.startQuoteId});
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  bool firstInit = true;
   var backgroundImage = AssetImage('assets/images/loading_background.jpg');
 
   @override
@@ -112,7 +113,11 @@ class _HomeState extends State<Home> {
 
     Future<void> initiateData() async {
       await decorState.initUserIntegration();
-      await quoteState.initInstance();
+      if(firstInit) {
+        firstInit = false;
+        quoteState.setQuoteToInsert();
+      }
+      await quoteState.initInstance(widget.startQuoteId);
     }
 
     return Scaffold(

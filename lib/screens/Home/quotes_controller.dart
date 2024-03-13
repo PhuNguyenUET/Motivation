@@ -5,10 +5,17 @@ import 'user_controller.dart';
 import '../../models/quote.dart';
 
 class QuoteController extends ChangeNotifier {
-  Future<void> initInstance() async {
+  int _quoteToInsert = 0;
+  void setQuoteToInsert() {
+    _quoteToInsert = _quoteIndex;
+  }
+  Future<void> initInstance(int startId) async {
     if (_quoteList.isEmpty || _quoteList[0].id == 0) {
       _quoteIndex = 0;
       await _getNextQuotesBatch();
+    }
+    if(startId != 0) {
+      _quoteList[_quoteToInsert] = await _backend.getQuoteFromId(startId);
     }
   }
   static final _backend = QuoteIntegration();
@@ -39,6 +46,10 @@ class QuoteController extends ChangeNotifier {
       _quoteIndex = 0;
     }
     notifyListeners();
+  }
+
+  void resetQuoteIndex() async {
+    _quoteIndex = 0;
   }
 
    void setCategoryUserCreated(String category, List<Quote> quotes) {

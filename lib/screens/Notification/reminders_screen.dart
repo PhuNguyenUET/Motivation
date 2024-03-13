@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:motivation/models/notification_setting.dart';
 import 'package:motivation/screens/Notification/reminder_screen_controller.dart';
+import 'package:motivation/services/post_notification_service.dart';
 import 'package:provider/provider.dart';
 
 import '../UtilityScreens/loading_screen.dart';
@@ -141,7 +142,12 @@ class _ReminderScreenState extends State<ReminderScreen> {
                     ),
                     SizedBox(height: 15,),
                     ElevatedButton(
-                        onPressed: () async { await reminderState.updateNotificationSettings();},
+                        onPressed: () async {
+                          Overlay.of(context).insert(loadingOverlay);
+                          await reminderState.updateNotificationSettings();
+                          await NotificationService.instance.calculateScheduleNotification();
+                          loadingOverlay.remove();
+                          },
                         child: Text("Save"),
                       style: ButtonStyle(
                         foregroundColor: MaterialStateProperty.all<Color>(Colors.white),

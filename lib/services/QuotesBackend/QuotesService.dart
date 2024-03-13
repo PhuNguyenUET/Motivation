@@ -104,4 +104,17 @@ class QuotesService {
     int cateId = await _quotesRepository.getCategoryId('user-created');
     return await _quotesRepository.getNumberOfQuotesInCategory(cateId);
   }
+
+  Future<Quote> getQuoteFromId(int quoteId) async {
+    return await _quotesRepository.getQuoteById(quoteId);
+  }
+
+  Future<int> getRandomQuoteIdByCate(String category) async {
+    if(category == 'general') {
+      return await _quotesRepository.getRandomQuoteId();
+    } else {
+      int cateId = await _quotesRepository.getCategoryId(category);
+      return await _quotesRepository.getRandomQuoteIdFromCateId(cateId);
+    }
+  }
 }

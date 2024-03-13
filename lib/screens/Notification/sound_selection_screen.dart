@@ -14,10 +14,10 @@ class SoundSelectionScreen extends StatefulWidget {
 
   @override
   State<SoundSelectionScreen> createState() =>
-      _CategorySelectionScreenState();
+      _SoundSelectionScreenState();
 }
 
-class _CategorySelectionScreenState extends State<SoundSelectionScreen> {
+class _SoundSelectionScreenState extends State<SoundSelectionScreen> {
   int? currentSound;
   final player = AudioPlayer();
 
@@ -25,11 +25,18 @@ class _CategorySelectionScreenState extends State<SoundSelectionScreen> {
 
   Stream<int> get soundStream => _streamController.stream;
 
+  Future<void> destroyPlayer() async {
+    await player.stop();
+    await player.dispose();
+  }
+
   @override
-  void dispose() {
+  Future<void> dispose() async {
     // TODO: implement dispose
-    player.stop();
-    player.dispose();
+    Future.delayed(Duration.zero, () async {
+      await destroyPlayer();
+    });
+    super.dispose();
   }
 
   @override
@@ -72,6 +79,7 @@ class _CategorySelectionScreenState extends State<SoundSelectionScreen> {
                         child: snapshot.connectionState == ConnectionState.done
                             ? AnimationLimiter(
                           child: ListView.builder(
+                            cacheExtent: 1000,
                               itemCount: 12,
                               scrollDirection: Axis.vertical,
                               itemBuilder:

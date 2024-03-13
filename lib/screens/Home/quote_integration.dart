@@ -57,4 +57,8 @@ class QuoteIntegration {
   Future<int> getIdFromCategory(String category) async {
     return await _backend.getIdFromCategory(category);
   }
+
+  Future<Quote> getQuoteFromId(int quoteId) async {
+    return await _backend.getQuoteFromId(quoteId);
+  }
 }
