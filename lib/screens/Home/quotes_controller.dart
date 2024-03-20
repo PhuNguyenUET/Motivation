@@ -33,6 +33,14 @@ class QuoteController extends ChangeNotifier {
     return _quoteIndex != 0;
   }
 
+  int getQuotesCount() {
+    return _quoteList.length;
+  }
+
+  Quote getQuoteAtIndex(int index) {
+    return _quoteList[index];
+  }
+
   Future<void> increaseQuoteIndex() async {
     _quoteIndex ++;
     if (_quoteIndex == _quoteList.length) {
@@ -68,6 +76,11 @@ class QuoteController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateQuoteIndex(int quoteIndex) {
+    _quoteIndex = quoteIndex;
+    //notifyListeners();
+  }
+
   String getCurrentQuote() {
     if (_quoteList.isEmpty) {
       _noQuotes = true;
@@ -93,6 +106,10 @@ class QuoteController extends ChangeNotifier {
       return false;
     }
     return _quoteList[_quoteIndex].favourite ?? false;
+  }
+
+  bool getIsFav(int index) {
+    return _quoteList[index].favourite ?? false;
   }
 
   String getCurrentAuthor() {

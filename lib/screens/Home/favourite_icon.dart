@@ -6,7 +6,9 @@ import 'package:provider/provider.dart';
 
 
 class FavouriteIcon extends StatefulWidget {
-  const FavouriteIcon({super.key});
+  FavouriteIcon({super.key, required this.currentIdx});
+
+  int currentIdx;
 
   @override
   State<FavouriteIcon> createState() => _FavouriteIconState();
@@ -17,7 +19,6 @@ class _FavouriteIconState extends State<FavouriteIcon> {
 
   @override
   Widget build(BuildContext context) {
-
     var quoteState = Provider.of<QuoteController>(context, listen: true);
 
     isFav = quoteState.isCurrentQuoteFav();

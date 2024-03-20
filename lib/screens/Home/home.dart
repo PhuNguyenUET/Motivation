@@ -7,6 +7,7 @@ import 'package:motivation/constants/button_style.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:motivation/models/quote.dart';
 import 'package:motivation/screens/CollectionScreen/collection_addition_screen.dart';
+import 'package:motivation/screens/Home/QuoteFormat.dart';
 import 'package:motivation/screens/Home/favourite_icon.dart';
 import 'package:motivation/screens/Home/quote_displayer.dart';
 import 'package:motivation/screens/UtilityScreens/loading.dart';
@@ -191,69 +192,8 @@ class _HomeState extends State<Home> {
                         ],
                       ),
                       Expanded(
-                        child: QuoteDisplay(
-                            isWaiting: snapshot.connectionState ==
-                                ConnectionState.waiting),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: () async {
-                              if (snapshot.connectionState ==
-                                      ConnectionState.waiting ||
-                                  quoteState.noQuotes) {
-                                return;
-                              }
-                              Overlay.of(context).insert(loadingOverlay);
-                              Uint8List img = await ScreenshotSaver().captureScreen(
-                                  AssetImage(
-                                      'assets/images/wallpaper_${decorState.getBackgroundIndex()}.jpg'),
-                                  quoteState.getCurrentQuote(),
-                                  quoteState.getCurrentAuthor(),
-                                  'Font${decorState.getFontIndex()}');
-                              final tempDir = await getTemporaryDirectory();
-                              File file =
-                                  await File('${tempDir.path}/image.png')
-                                      .create();
-                              file.writeAsBytesSync(img);
-                              loadingOverlay.remove();
-                              await Share.shareXFiles(
-                                [
-                                  new XFile('${tempDir.path}/image.png'),
-                                ],
-                                subject: 'Shared quote',
-                              );
-                            },
-                            icon: const Icon(
-                              Symbols.share,
-                              size: 50.0,
-                              weight: 200,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(width: 20.0),
-                          IconButton(
-                            onPressed: () async {
-                              if (snapshot.connectionState ==
-                                      ConnectionState.waiting ||
-                                  quoteState.noQuotes) {
-                                return;
-                              }
-                              _showUserQuoteAdditonPanel(
-                                  quoteState.getCurrentQuoteObject());
-                            },
-                            icon: const Icon(
-                              Symbols.bookmark_add,
-                              size: 50.0,
-                              weight: 200,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(width: 20.0),
-                          FavouriteIcon(),
-                        ],
+                        child: QuoteFormat(isWaiting: snapshot.connectionState ==
+                            ConnectionState.waiting),
                       ),
                       const SizedBox(height: 60.0)
                     ],
