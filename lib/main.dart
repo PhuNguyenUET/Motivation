@@ -10,6 +10,7 @@ import 'package:motivation/screens/QuoteAdditionScreen/add_quotes_screen.dart';
 import 'package:motivation/screens/Font&Theme/all_background.dart';
 import 'package:motivation/screens/Font&Theme/all_fonts.dart';
 import 'package:motivation/screens/Home/home.dart';
+import 'package:motivation/screens/QuoteAdditionScreen/quotes_addition_controller.dart';
 import 'package:motivation/screens/UtilityScreens/loading_screen.dart';
 import 'package:motivation/screens/Home/quotes_controller.dart';
 import 'package:motivation/screens/Notification/reminder_screen_controller.dart';
@@ -61,6 +62,9 @@ class MyApp extends StatelessWidget {
           ),
           ChangeNotifierProvider<UserCreatedCategoryController >(
             create: (_) => UserCreatedCategoryController(),
+          ),
+          ChangeNotifierProvider<QuotesAdditionController >(
+            create: (_) => QuotesAdditionController(),
           ),
         ],
       builder: (context, child) {

@@ -17,6 +17,11 @@ class QuoteController extends ChangeNotifier {
     if(startId != 0) {
       _quoteList[_quoteToInsert] = await _backend.getQuoteFromId(startId);
     }
+    if (_quoteList.isEmpty) {
+      _noQuotes = true;
+    } else {
+      _noQuotes = false;
+    }
   }
   static final _backend = QuoteIntegration();
 
@@ -38,6 +43,12 @@ class QuoteController extends ChangeNotifier {
   }
 
   Quote getQuoteAtIndex(int index) {
+    if (_quoteList.isEmpty) {
+      _noQuotes = true;
+      return Quote(id: 0, quote: "No quotes found in this category");
+    } else {
+      _noQuotes = false;
+    }
     return _quoteList[index];
   }
 

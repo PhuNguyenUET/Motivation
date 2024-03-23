@@ -91,7 +91,7 @@ class _QuoteFormatState extends State<QuoteFormat> {
             child: widget.isWaiting
                 ? QuoteColumn(quote: 'Fetching...', author: '', fontId: 0)
                 : PageView.builder(
-                itemCount: quoteState.getQuotesCount(),
+                itemCount: quoteState.getQuotesCount() == 0 ? 1 : quoteState.getQuotesCount(),
                 controller: _pageViewController,
                 onPageChanged: handlePageViewChanged,
                 scrollDirection: Axis.vertical,

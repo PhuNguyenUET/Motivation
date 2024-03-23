@@ -3,6 +3,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:motivation/constants/constants.dart';
 import 'package:motivation/models/userQuote.dart';
+import 'package:motivation/screens/QuoteAdditionScreen/QuoteAddButton.dart';
 import 'package:motivation/screens/UtilityScreens/loading.dart';
 import 'package:motivation/screens/QuoteAdditionScreen/quotes_addition_controller.dart';
 import 'package:motivation/screens/Home/quotes_controller.dart';
@@ -10,6 +11,8 @@ import 'package:motivation/screens/QuoteAdditionScreen/your_quote_tile.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/quote.dart';
+import '../UtilityScreens/FakePopUpRoute.dart';
+import 'PopUpAddQuote.dart';
 
 class QuotesAddition extends StatefulWidget {
   const QuotesAddition({super.key});
@@ -19,22 +22,17 @@ class QuotesAddition extends StatefulWidget {
 }
 
 class _QuotesAdditionState extends State<QuotesAddition> {
-  final _formKey = GlobalKey<FormState>();
-  final quoteController = TextEditingController();
-  final authorController = TextEditingController();
-
-  String quote = '';
-  String author = '';
-  Quote? currentQuote;
+  final key = GlobalKey<AnimatedListState>();
   List<Quote> userCreated = [];
 
   @override
   Widget build(BuildContext context) {
-    var quoteAdditionState = QuotesAdditionController();
+    var quoteAdditionState = Provider.of<QuotesAdditionController>(context, listen: true);
     var quoteState = Provider.of<QuoteController>(context, listen: true);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      floatingActionButton: FloatingQuoteAddButton(insertFunction: insertItem,),
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
@@ -53,209 +51,89 @@ class _QuotesAdditionState extends State<QuotesAddition> {
               await quoteState.forceRebuild();
             }
           },
-          child: Column(children: [
-            Expanded(
-              flex: 4,
-              child: SingleChildScrollView(
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
-                  child: Form(
-                      key: _formKey,
-                      //autovalidateMode: AutovalidateMode.onUserInteraction,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            "Add your own quotes",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 20,
-                                decoration: TextDecoration.underline),
-                          ),
-                          SizedBox(
-                            height: 20.0,
-                          ),
-                          TextFormField(
-                            controller: quoteController,
-                            decoration: Constants.textInputDecoration.copyWith(
-                                labelText: 'Quote',
-                                hintText: 'Add your quote here',
-                                icon: Icon(Symbols.text_ad_rounded)),
-                            maxLines: null,
-                            validator: (val) {
-                              if (val == null || val!.isEmpty) {
-                                return 'Quote cannot be left empty';
-                              } else {
-                                return null;
-                              }
-                            },
-                            onChanged: (val) {
-                              setState(() {
-                                quote = val;
-                              });
-                            },
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            controller: authorController,
-                            decoration: Constants.textInputDecoration.copyWith(
-                                labelText: 'Author',
-                                hintText: 'Add author here',
-                                icon: Icon(Symbols.person_add)),
-                            maxLines: null,
-                            validator: (val) {},
-                            onChanged: (val) {
-                              setState(() {
-                                author = val;
-                              });
-                            },
-                          ),
-                          SizedBox(height: 20.0),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: ElevatedButton(
-                                      child: Text(
-                                        'Save',
-                                      ),
-                                      style: ButtonStyle(
-                                          backgroundColor: MaterialStateProperty.all(
-                                              Colors.grey[300])),
-                                      onPressed: () async {
-                                        if (_formKey.currentState!.validate()) {
-                                          if (currentQuote == null) {
-                                            UserQuote quoteToAdd = UserQuote(
-                                                quote: quote, author: author);
-                                            await quoteAdditionState
-                                                .insertQuote(quoteToAdd);
-                                          } else {
-                                            currentQuote!.quote = quote;
-                                            currentQuote!.author = author;
-                                            String text = await quoteAdditionState
-                                                .editQuote(currentQuote!);
-                                          }
-                                          _formKey.currentState!.reset();
-                                          authorController.clear();
-                                          quoteController.clear();
-                                          FocusManager.instance.primaryFocus
-                                              ?.unfocus();
-                                          setState(() {
-                                            currentQuote = null;
-                                            quote = '';
-                                            author = '';
-                                          });
-                                        }
-                                      }),
-                                ),
-                                SizedBox(width: 15,),
-                                Expanded(
-                                  child: ElevatedButton(
-                                      child: Text(
-                                        'Cancel',
-                                      ),
-                                      style: ButtonStyle(
-                                          backgroundColor: MaterialStateProperty.all(
-                                              Colors.grey[300])),
-                                      onPressed: () {
-                                        _formKey.currentState!.reset();
-                                        authorController.clear();
-                                        quoteController.clear();
-                                        FocusManager.instance.primaryFocus?.unfocus();
+          child: FutureBuilder<List<Quote>>(
+              future: quoteAdditionState.getAllUserCreatedQuotes(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<Quote>> snapshot) {
+                if (snapshot.hasData) {
+                  userCreated = snapshot.data ?? [];
+                  return userCreated.isEmpty ? Center(child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 300,
+                          child: Image.asset('assets/images/empty_box.png')
+                      ),
+                      Text("Hmmm you don't have any quote yet", style: TextStyle(fontSize: 20),),
+                    ],
+                  )) : AnimationLimiter(
+                    child: AnimatedList (
+                        key: key,
+                        scrollDirection: Axis.vertical,
+                        initialItemCount: userCreated.length,
+                        itemBuilder: (context, index, animation) {
+                          return AnimationConfiguration.staggeredList(
+                            position: index,
+                            duration: const Duration(milliseconds: 700),
+                            child: SlideAnimation(
+                              verticalOffset: 500.0,
+                              child: FadeInAnimation(
+                                child: SizeTransition(
+                                  sizeFactor: animation,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 3.0, horizontal: 4.0),
+                                    child: YourQuoteTile(
+                                      quote: index >= userCreated.length ? Quote(id: 0, quote: 'Fetching...') : userCreated[index],
+                                      editFunction: () {
+                                        Navigator.of(context).push(FakePopUpRoute(builder: (context) {
+                                          return PopUpAddQuote(quote: userCreated[index].quote, author: userCreated[index].author, insertFunction: insertItem,);
+                                        }));
+                                      },
+                                      deleteFunction: () async {
+                                        Quote quoteToAnimate = userCreated[index];
+                                        await quoteAdditionState.deleteQuote(
+                                            userCreated[index]);
                                         setState(() {
-                                          currentQuote = null;
-                                          quote = '';
-                                          author = '';
+                                          userCreated = [];
                                         });
-                                      }),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      )),
-                ),
-              ),
-            ),
-            const Divider(
-              thickness: 1,
-              indent: 10,
-              endIndent: 10,
-              color: Colors.black,
-            ),
-            FutureBuilder<List<Quote>>(
-                future: quoteAdditionState.getAllUserCreatedQuotes(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<List<Quote>> snapshot) {
-                  if (snapshot.hasData) {
-                    userCreated = snapshot.data ?? [];
-                    return Expanded(
-                      flex: 5,
-                      child: AnimationLimiter(
-                        child: ListView.builder(
-                            itemCount: userCreated.length,
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (BuildContext context, int index) {
-                              return AnimationConfiguration.staggeredList(
-                                position: index,
-                                duration: const Duration(milliseconds: 700),
-                                child: SlideAnimation(
-                                  verticalOffset: 500.0,
-                                  child: FadeInAnimation(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 3.0, horizontal: 4.0),
-                                      child: YourQuoteTile(
-                                        quote: userCreated[index],
-                                        editFunction: () {
-                                          setState(() {
-                                            currentQuote = userCreated[index];
-                                            quote = userCreated[index].quote;
-                                            author =
-                                                userCreated[index].author ?? '';
-                                          });
-                                          quoteController.text = quote;
-                                          authorController.text = author ?? '';
-                                        },
-                                        deleteFunction: () async {
-                                          if (userCreated[index] ==
-                                              currentQuote) {
-                                            setState(() {
-                                              currentQuote = null;
-                                              quote = '';
-                                              author = '';
-                                            });
-                                          }
-                                          await quoteAdditionState.deleteQuote(
-                                              userCreated[index]);
-                                          setState(() {
-                                            userCreated = [];
-                                          });
-                                          quoteController.text = quote;
-                                          authorController.text = author ?? '';
-                                        },
-                                      ),
+                                        removeAtKey(index, quoteToAnimate);
+                                      },
                                     ),
                                   ),
                                 ),
-                              );
-                            }),
-                      ),
-                    );
-                  } else {
-                    return Expanded(
-                      flex: 5,
-                      child: Loading(),
-                    );
-                  }
-                })
-          ]),
+                              ),
+                            ),
+                          );
+                        }),
+                  );
+                } else {
+                  return Center(
+                    child: Loading(),
+                  );
+                }
+              }),
         ),
       ),
     );
+  }
+
+  void removeAtKey(int index, Quote quote) {
+    key.currentState?.removeItem(index, (context, animation) => SizeTransition(
+      sizeFactor: animation,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+            vertical: 3.0, horizontal: 4.0),
+        child: YourQuoteTile(
+          quote: quote,
+          editFunction: () {},
+          deleteFunction: () {},
+        ),
+      ),
+    ));
+  }
+
+  void insertItem() {
+    key.currentState?.insertItem(userCreated.length);
   }
 }

@@ -1,11 +1,12 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:motivation/screens/Home/quote_integration.dart';
 
 import '../../models/quote.dart';
 import '../../models/userQuote.dart';
 
-class QuotesAdditionController {
+class QuotesAdditionController extends ChangeNotifier{
   final QuoteIntegration _backend = QuoteIntegration();
 
   Future<List<Quote>> getAllUserCreatedQuotes() async {
@@ -14,7 +15,9 @@ class QuotesAdditionController {
   }
 
   Future<String> insertQuote(UserQuote quote) async {
-    return await _backend.insertQuote(quote);
+    String res = await _backend.insertQuote(quote);
+    notifyListeners();
+    return res;
   }
 
   Future<String> editQuote(Quote quote) async {

@@ -192,8 +192,11 @@ class _HomeState extends State<Home> {
                         ],
                       ),
                       Expanded(
-                        child: QuoteFormat(isWaiting: snapshot.connectionState ==
-                            ConnectionState.waiting),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: QuoteFormat(isWaiting: snapshot.connectionState ==
+                              ConnectionState.waiting),
+                        ),
                       ),
                       const SizedBox(height: 60.0)
                     ],
