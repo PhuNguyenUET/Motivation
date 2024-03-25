@@ -26,7 +26,7 @@ class AllFonts extends StatelessWidget {
           child: AnimationLimiter(
             child: GridView.builder(
                 cacheExtent: 9999,
-                itemCount: 30,
+                itemCount: 13,
                 scrollDirection: Axis.vertical,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2, childAspectRatio: 2 / 1),

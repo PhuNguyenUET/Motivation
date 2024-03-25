@@ -21,7 +21,7 @@ class QuoteColumn extends StatelessWidget {
               fontSize: 25.0),
         ),
         Text(
-          author,
+          author == '' ? author : '- $author -',
           textAlign: TextAlign.center,
           style: TextStyle(
               fontFamily: 'Font$fontId',

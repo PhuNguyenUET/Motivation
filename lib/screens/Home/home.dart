@@ -194,8 +194,8 @@ class _HomeState extends State<Home> {
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: QuoteFormat(isWaiting: snapshot.connectionState ==
-                              ConnectionState.waiting),
+                          child: snapshot.connectionState ==
+                              ConnectionState.waiting ? QuoteFormat(isWaiting: true) : QuoteFormat(isWaiting: false),
                         ),
                       ),
                       const SizedBox(height: 60.0)
